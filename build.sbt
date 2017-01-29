@@ -12,7 +12,10 @@ lazy val squants = crossProject
   .in(file("."))
   .settings(defaultSettings: _*)
   .jvmSettings(
-    osgiSettings: _*
+    osgiSettings,
+    tutSettings,
+    tutTargetDirectory := file("."),
+    tutSourceDirectory := file("shared") / "src" / "main" / "tut"
   )
   .jsSettings(
     parallelExecution in Test := false,
@@ -31,7 +34,3 @@ lazy val root = project.in(file("."))
 
 lazy val squantsJVM = squants.jvm.enablePlugins(SbtOsgi)
 lazy val squantsJS = squants.js
-
-tutSettings
-tutTargetDirectory := file(".")
-tutSourceDirectory := file("shared") / "src" / "main" / "tut"
