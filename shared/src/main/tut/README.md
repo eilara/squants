@@ -94,7 +94,7 @@ _Only quantities with the same dimensions may be compared, equated, added, or su
 Squants helps prevent errors like these by type checking operations at compile time and
 automatically applying scale and type conversions at run-time.  For example,
 
-```scala
+```tut:silent
 import squants.energy.{Kilowatts, Megawatts, Power}
 val load1: Power = Kilowatts(12)        // returns Power(12, Kilowatts) or 12 kW
 val load2: Power = Megawatts(0.023)     // Power: 0.023 MW
@@ -107,7 +107,7 @@ works because Kilowatts and Megawatts are both units of Power.  Only the scale i
 different and the library applies an appropriate conversion.  Also, notice that keeping track of
 the scale within the value name is no longer needed.
 
-```scala
+```tut:silent
 val load: Power = Kilowatts(1.2)            // Power: 1.2 kW
 val energy: Energy = KilowattHours(23.0)    // Energy: 23 kWH
 val sum = load + energy                     // Invalid operation - does not compile
@@ -125,13 +125,13 @@ Conversions are implemented by defining relationships between Quantity types usi
 The following code demonstrates creating ratio between two quantities of the same dimension,
 resulting in a dimensionless value:
 
-```scala
+```tut:silent
 val ratio = Days(1) / Hours(3)  // Double: 8.0
 ```
 
 This code demonstrates use of the `Power.*` method that takes a `Time` and returns an `Energy`:
 
-```scala
+```tut:silent
 val load = Kilowatts(1.2)                   // Power: 1.2 kW
 val time = Hours(2)                         // Time: 2 h
 val energyUsed = load * time                // Energy: 2.4 kWh
@@ -139,7 +139,7 @@ val energyUsed = load * time                // Energy: 2.4 kWh
 
 This code demonstrates use of the `Energy./` method that takes a `Time` and returns a `Power`:
 
-```scala
+```tut:silent
 val aveLoad: Power = energyUsed / time      // Power: 1.2 kW
 ```
 
@@ -147,7 +147,7 @@ val aveLoad: Power = energyUsed / time      // Power: 1.2 kW
 
 Quantity values are based in the units used to create them.
 
-```scala
+```tut:silent
 val loadA: Power = Kilowatts(1200)  // Power: 1200.0 kW
 val loadB: Power = Megawatts(1200)  // Power: 1200.0 MW
 ```
@@ -160,7 +160,7 @@ However, there are times when you may need to set a Quantity value to a specific
 
 When necessary, a quantity can be converted to another unit using the `in` method.
 
-```scala
+```tut:silent
 val loadA = Kilowatts(1200)    // Power: 1200.0 kW
 val loadB = loadA in Megawatts // Power: 1.2 MW
 val loadC = loadA in Gigawatts // Power: 0.0012 GW
@@ -172,7 +172,7 @@ or to perform analysis beyond Squant's domain)
 
 When necessary, the value can be extracted in the desired unit with the `to` method.
 
-```scala
+```tut:silent
 import scala.language.postfixOps
 val load: Power = Kilowatts(1200)
 val kw: Double = load to Kilowatts // Double: 1200.0
@@ -182,7 +182,7 @@ val gw: Double = load to Gigawatts // Double: 0.0012
 
 Most types include methods with convenient aliases for the `to` methods.
 
-```scala
+```tut:silent
 val kw: Double = load toKilowatts // Double: 1200.0
 val mw: Double = load toMegawatts // Double: 1.20
 val gw: Double = load toGigawatts // Double: 0.0012
@@ -195,7 +195,7 @@ To prevent improper usage, direct access to the `Quantity.value` field may be de
 
 Creating strings formatted in the desired unit:
 
-```scala
+```tut:silent
 val kw: String = load toString Kilowatts // String: “1200.0 kW”
 val mw: String = load toString Megawatts // String: “1.2 MW”
 val gw: String = load toString Gigawatts // String: “0.0012 GW”
@@ -203,7 +203,7 @@ val gw: String = load toString Gigawatts // String: “0.0012 GW”
 
 Creating Tuple2(Double, String) that includes a numeric value and unit symbol:
 
-```scala
+```tut:silent
 val load: Power = Kilowatts(1200)
 val kw: Tuple2 = load toTuple               // Tuple2: (1200, "kW")
 val mw: Tuple2 = load toTuple Megawatts     // Tuple2: (1.2, "MW)
@@ -215,7 +215,7 @@ that do not use Squants, or require use of more basic types (Double, String)
 
 Simple console based conversions (using DSL described below)
 
-```scala
+```tut:silent
 import squants.mass.MassConversions._
 import squants.mass.Pounds
 import squants.thermal.ThermalConversions._
@@ -233,7 +233,7 @@ kilogram / pound            // Double: 2.2046226218487757
 ### Mapping over Quantity values
 Apply a `Double => Double` operation to the underlying value of a quantity, while preserving its type and unit.
 
-```scala
+```tut:silent
 val load = Kilowatts(2.0)                   // 2.0 kW
 val newLoad = load.map(v => v * 2 + 10)     // Power: 14.0 kW
 ```
@@ -244,7 +244,7 @@ The q.map(f) method effectively expands to q.unit(f(q.to(q.unit))
 Create an implicit Quantity value to be used as a tolerance in approximations.
 Then use the `approx` method (or `=~`, `~=`, `≈` operators) like you would use the `equals` method (`==` operator).
 
-```scala
+```tut:silent
 implicit val tolerance = Watts(.1)      // implicit Power: 0.1 W
 val load = Kilowatts(2.0)               // Power: 2.0 kW
 val reading = Kilowatts(1.9999)         // Power: 1.9999 kW
@@ -271,7 +271,7 @@ The SVector object is a factory for creating DoubleVectors and QuantityVectors.
 The dimensionality of the vector is determined by the number of arguments.
 Most basic vector operations are currently supported (addition, subtraction, scaling, cross and dot products)
 
-```scala
+```tut:silent
 import squants.{QuantityVector, SVector}
 
 val vector: QuantityVector[Length] = SVector(Kilometers(1.2), Kilometers(4.3), Kilometers(2.3))
@@ -291,7 +291,7 @@ val crossProduct = vector crossProduct vectorDouble  // currently only supported
 
 Simple non-quantity (Double based) vectors are also supported.
 
-```scala
+```tut:silent
 val vector: DoubleVector = SVector(1.2, 4.3, 2.3, 5.4)   // a Four-dimensional vector
 ```
 
@@ -299,7 +299,7 @@ val vector: DoubleVector = SVector(1.2, 4.3, 2.3, 5.4)   // a Four-dimensional v
 NOTE - This feature is currently under development and the final implementation being evaluated.
 The following type of operation is the goal.
 
-```scala
+```tut:silent
 val vectorLength = QuantityVector(Kilometers(1.2), Kilometers(4.3), Kilometers(2.3))
 val vectorArea = vectorLength * Kilometers(2)   // QuantityVector(2.4 km², 8.6 km², 4.6 km²)
 val vectorVelocity = vectorLength / Seconds(1)  // QuantityVector(1200.0 m/s, 4300.0 m/s, 2300.0 m/s)
@@ -310,7 +310,7 @@ val vectorLength = vectorDouble.to(Kilometers)  // QuantityVector(1.2 km, 4.3 km
 
 Currently dimensional conversions are supported by using the slightly verbose, but flexible map method.
 
-```scala
+```tut:silent
 val vectorLength = QuantityVector(Kilometers(1.2), Kilometers(4.3), Kilometers(2.3))
 val vectorArea = vectorLength.map[Area](_ * Kilometers(2))      // QuantityVector(2.4 km², 8.6 km², 4.6 km²)
 val vectorVelocity = vectorLength.map[Velocity](_ / Seconds(1)) // QuantityVector(1200.0 m/s, 4300.0 m/s, 2300.0 m/s)
@@ -321,7 +321,7 @@ val vectorLength = vectorDouble.map[Length](Kilometers(_))      // QuantityVecto
 
 Convert QuantityVectors to specific units using the `to` or `in` method - much like Quantities.
 
-```scala
+```tut:silent
 val vectorLength = QuantityVector(Kilometers(1.2), Kilometers(4.3), Kilometers(2.3))
 val vectorMetersNum = vectorLength.to(Meters)   // DoubleVector(1200.0, 4300.0, 2300.0)
 val vectorMeters = vectorLength.in(Meters)      // QuantityVector(1200.0 m, 4300.0 m, 2300.0 m)
@@ -337,7 +337,7 @@ many of the behaviors have been overridden and augmented to realize correct beha
 A Quantity of purchasing power measured in Currency units.
 Like other quantities, the Unit of Measures are used to create Money values.
 
-```scala
+```tut:silent
 import squants.money.{BTC, JPY, USD, XAU}
 
 val tenBucks = USD(10)      // Money: 10 USD
@@ -352,7 +352,7 @@ A Price value is typed on a Quantity and can be denominated in any defined Curre
 
 *Price = Money / Quantity*
 
-```scala
+```tut:silent
 import squants.money.{Dozen, Each}
 
 val threeForADollar = USD(1) / Each(3)              // Price[Dimensionless]: 1 USD / 3 ea
@@ -367,7 +367,7 @@ val milkQuota = milkPrice * USD(20)             // Volume: 5 gal
 ### FX Support
 Currency Exchange Rates are used to define the conversion factors between currencies
 
-```scala
+```tut:silent
 // create an exchange rate
 val rate = CurrencyExchangeRate(USD(1), JPY(100))
 // OR
@@ -395,7 +395,7 @@ This allows your application to work with a default currency based on an applica
 It also provides support for updating exchange rates and using those rates for automatic conversions between currencies.
 The technique and frequency chosen for exchange rate updates is completely in control of the application.
 
-```scala
+```tut:silent
 val exchangeRates = List(USD / CAD(1.05), USD / MXN(12.50), USD / JPY(100))
 implicit val moneyContext = defaultMoneyContext withExchangeRates exchangeRates
 
@@ -409,7 +409,7 @@ val northAmericanSales: Money = (CAD(275) + USD(350) + MXN(290)) in USD
 ## Quantity Ranges
 Used to represent a range of Quantity values between an upper and lower bound
 
-```scala
+```tut:silent
 val load1: Power = Kilowatts(1000)
 val load2: Power = Kilowatts(5000)
 val range: QuantityRange[Power] = QuantityRange(load1, load2)
@@ -417,7 +417,7 @@ val range: QuantityRange[Power] = QuantityRange(load1, load2)
 
 Use multiplication and division to create a Seq of ranges from the original
 
-```scala
+```tut:silent
 // Create a Seq of 10 sequential ranges starting with the original and each the same size as the original
 val rs1 = range * 10
 // Create a Seq of 10 sequential ranges each 1/10th of the original size
@@ -427,7 +427,7 @@ val rs3 = range / Kilowatts(400)
 ```
 Apply foreach, map and foldLeft/foldRight directly to QuantityRanges with a divisor
 
-```scala
+```tut:silent
 // foreach over each of the 400 kilometer ranges within the range
 range.foreach(Kilometers(400)) {r => ???}
 // map over each of 10 even parts of the range
@@ -440,7 +440,7 @@ NOTE - Because these implementations of foreach, map and fold* take a parameter 
 are not directly compatible with Scala's for comprehensions.
 To use in a for comprehension, apply the * or / operators as described above to create a Seq from the Range.
 
-```scala
+```tut:silent
 for {
     interval <- (0.seconds to 1.seconds) * 60  // 60 time ranges, 0s to 1s, 1s to 2s, ...., 59s to 60s
     ...
@@ -453,7 +453,7 @@ more naturally expressive and readable way.
 
 Create Quantities using Unit Of Measure Factory objects (no implicits required)
 
-```scala
+```tut:silent
 val load = Kilowatts(100)
 val time = Hours(3.75)
 val money = USD(112.50)
@@ -462,7 +462,7 @@ val price = Price(money, MegawattHours(1))
 
 Create Quantities using Unit of Measure names and/or symbols (uses implicits)
 
-```scala
+```tut:silent
 val load1 = 100 kW 			        // Simple expressions don’t need dots
 val load2 = 100 megaWatts
 val time = 3.hours + 45.minutes     // Compound expressions may need dots
@@ -470,7 +470,7 @@ val time = 3.hours + 45.minutes     // Compound expressions may need dots
 
 Create Quantities using operations between other Quantities
 
-```scala
+```tut:silent
 val energyUsed = 100.kilowatts * (3.hours + 45.minutes)
 val price = 112.50.USD / 1.megawattHours
 val speed = 55.miles / 1.hours
@@ -478,19 +478,19 @@ val speed = 55.miles / 1.hours
 
 Create Quantities using formatted Strings
 
-```scala
+```tut:silent
 val load = Power("40 MW")		// 40 MW
 ```
 
 Create Quantities using Tuples
 
-```scala
+```tut:silent
 val load = Power((40, "MW"))    // 40 MW
 ```
 
 Use single unit values to simplify expressions
 
-```scala
+```tut:silent
 // Hours(1) == 1.hours == hour
 val ramp = 100.kilowatts / hour
 val speed = 100.kilometers / hour
@@ -502,7 +502,7 @@ val low = 40.dollars / megawattHour
 
 Implicit conversion support for using Double on the left side of operations
 
-```scala
+```tut:silent
 val price = 10 / dollar	    // 1 USD / 10 ea
 val freq = 60 / second	    // 60 Hz
 val load = 10 * 4.MW		// 40 MW
@@ -510,7 +510,7 @@ val load = 10 * 4.MW		// 40 MW
 
 Create Quantity Ranges using `to` or `plusOrMinus` (`+-`) operators
 
-```scala
+```tut:silent
 val range1 = 1000.kW to 5000.kW	             // 1000.kW to 5000.kW
 val range2 = 5000.kW plusOrMinus 1000.kW     // 4000.kW to 6000.kW
 val range2 = 5000.kW +- 1000.kW              // 4000.kW to 6000.kW
@@ -520,7 +520,7 @@ val range2 = 5000.kW +- 1000.kW              // 4000.kW to 6000.kW
 Most Quantities that support implicit conversions also include an implicit Numeric object that can be imported
 to your code where Numeric support is required.  These follow the following pattern:
 
-```scala
+```tut:silent
 import squants.mass.MassConversions.MassNumeric
 
 val sum = List(Kilograms(100), Grams(34510)).sum
@@ -538,7 +538,7 @@ in a few important ways.
 
 The following code provides a basic example for creating a MoneyNumeric:
 
-```scala
+```tut:silent
 import MoneyConversions._
 implicit val moneyContext = defaultMoneyContext
 implicit val moneyNum = new MoneyNumeric()
@@ -576,7 +576,7 @@ The code for specific implementations include
 
 This is an abbreviated example of how a Quantity type is constructed:
 
-```scala
+```tut:silent
 class Length(val value: Double, val unit: LengthUnit) extends Quantity[Length]  { ... }
 object Length extends Dimension[Length]  { ... }
 trait LengthUnit extends UnitOfMeasure[Length]  { ... }
@@ -586,7 +586,7 @@ object Yards extends LengthUnit { ... }
 
 The apply method of the UOM objects are implemented as factories for creating Quantity values.
 
-```scala
+```tut:silent
 val len1: Length = Meters(4.3)
 val len2: Length = Yards(5)
 ```
@@ -599,7 +599,7 @@ Special traits are used to establish a time derivative relationship between quan
 
 For example Velocity is the 1st Time Derivative of Length (Distance), Acceleration is the 2nd Time Derivative.
 
-```scala
+```tut:silent
 class Length( ... ) extends Quantity[Length] with TimeIntegral[Velocity]
 ...
 class Velocity( ... ) extends Quantity[Velocity] with TimeDerivative[Length] with TimeIntegral[Acceleration]
@@ -609,7 +609,7 @@ class Acceleration( ... ) extends Quantity[Acceleration] with TimeDerivative[Vel
 
 These traits provide operations with time operands which result in correct dimensional transformations.
 
-```scala
+```tut:silent
 val distance: Length = Kilometers(100)
 val time: Time = Hours(2)
 val velocity: Velocity = distance / time
@@ -618,7 +618,7 @@ val acc: Acceleration = velocity / Seconds(1)
 val gravity = 32.feet / second.squared
 ```
 
-```scala
+```tut:silent
 // Power is the 1st Time Derivative of Energy, PowerRamp is the 2nd
 val power = Kilowatts(100)
 val time: Time = Hours(2)
@@ -633,7 +633,7 @@ val ramp = Kilowatt(50) / Hours(1)
 The primary use case for Squants, as described above, is to produce code that is typesafe within domains
 that perform dimensional analysis.
 
-```scala
+```tut:silent
 val energyPrice: Price[Energy] = 45.25.money / megawattHour
 val energyUsage: Energy = 345.kilowatts * 5.4.hours
 val energyCost: Money = energyPrice * energyUsage
@@ -652,7 +652,7 @@ val totalMassFlow: Mass = volFlowRate * flowTime * density
 Another excellent use case for Squants is stronger typing for fields in your domain model.
 This is OK ...
 
-```scala
+```tut:silent
 case class Generator(
   id: String,
   maxLoadKW: Double,
@@ -667,7 +667,7 @@ val gen2 = Generator("Gen2", 100, 250, 2944.5, "JPY", 0.5)
 
 ... but this is much better
 
-```scala
+```tut:silent
 import squants.energy.PowerRamp
 import squants.time.Time
 
@@ -688,7 +688,7 @@ Create wrappers around external services that use basic types to represent quant
 Your application code then uses the ACL to communicate with that system thus eliminating the need to deal
 with type and scale conversions in multiple places throughout your application logic.
 
-```scala
+```tut:silent
 class ScadaServiceAnticorruption(val service: ScadaService) {
   // ScadaService returns meter load as Double representing Megawatts
   def getLoad: Power = Megawatts(service.getLoad(meterId))
@@ -701,7 +701,7 @@ class ScadaServiceAnticorruption(val service: ScadaService) {
 
 Implement the ACL as a trait and mix in to the application's services where needed.
 
-```scala
+```tut:silent
 trait WeatherServiceAntiCorruption {
   val service: WeatherService
   def getTemperature: Temperature = Celsius(service.getTemperature)
@@ -711,7 +711,7 @@ trait WeatherServiceAntiCorruption {
 
 Extend the pattern to provide multi-currency support
 
-```scala
+```tut:silent
 class MarketServiceAnticorruption(val service: MarketService)
      (implicit val moneyContext: = MoneyContext) {
 
@@ -728,7 +728,7 @@ class MarketServiceAnticorruption(val service: MarketService)
 
 Build Anticorruption into Akka routers
 
-```scala
+```tut:silent
 // LoadReading message used within a Squants enabled application context
 case class LoadReading(meterId: String, time: Long, load: Power)
 class ScadaLoadListener(router: Router) extends Actor {
@@ -747,7 +747,7 @@ class ScadaLoadListener(router: Router) extends Actor {
 
 ... and REST API's with contracts that require basic types
 
-```scala
+```tut:silent
 trait LoadRoute extends HttpService {
   def repo: LoadRepository
   val loadRoute = {

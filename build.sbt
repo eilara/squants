@@ -31,3 +31,7 @@ lazy val root = project.in(file("."))
 
 lazy val squantsJVM = squants.jvm.enablePlugins(SbtOsgi)
 lazy val squantsJS = squants.js
+
+tutSettings
+tutTargetDirectory := file(".")
+tutSourceDirectory := file("shared") / "src" / "main" / "tut"
